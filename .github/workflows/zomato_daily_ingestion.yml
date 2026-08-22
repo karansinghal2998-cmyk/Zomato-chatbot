@@ -1,0 +1,64 @@
+name: Zomato Daily Dataset Refresh
+
+on:
+  schedule:
+    # Runs daily at 05:00 AM UTC (10:30 AM IST)
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+    inputs:
+      force_refresh:
+        description: 'Force dataset refresh even if up to date'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  refresh-dataset:
+    name: Refresh Zomato Dataset from Hugging Face
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Daily Dataset Refresh
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m src.scheduler.daily_refresh_cron
+
+      - name: Commit Updated Dataset
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/processed/
+          # Only commit if there are actual changes
+          git diff --staged --quiet || git commit -m "chore: daily Zomato dataset refresh [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      - name: Upload Dataset Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zomato-processed-dataset
+          path: data/processed/
+          retention-days: 7

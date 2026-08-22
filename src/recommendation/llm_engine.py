@@ -2,6 +2,7 @@
 LLM Recommendation & Reasoning Engine (Phase 5).
 Combines CandidateFilterEngine output with Groq LLM API (llama-3.3-70b-versatile)
 to generate top-5 personalized restaurant recommendations with natural language AI explanations.
+Falls back to OfflineFallbackEngine when LLM API is unavailable.
 """
 import json
 import time
@@ -11,6 +12,7 @@ from typing import List, Dict, Any, Optional
 from src.config import GROQ_API_KEY, GROQ_LLM_MODEL
 from src.input.preference_handler import UserPreferenceRequest
 from src.recommendation.groq_rate_limiter import GroqRateLimiter
+from src.recommendation.offline_fallback import OfflineFallbackEngine
 
 logging.basicConfig(level=logging.INFO)
 
@@ -25,6 +27,7 @@ class ZomatoRecommendationEngine:
 
     def __init__(self):
         self.rate_limiter = GroqRateLimiter()
+        self.fallback_engine = OfflineFallbackEngine()
         self.has_groq_sdk = HAS_GROQ and bool(GROQ_API_KEY and not GROQ_API_KEY.startswith("your_"))
 
         if self.has_groq_sdk:
@@ -32,7 +35,7 @@ class ZomatoRecommendationEngine:
             logging.info(f"✅ ZomatoRecommendationEngine initialized with Groq LLM API ({GROQ_LLM_MODEL}).")
         else:
             self.client = None
-            logging.info("ℹ️ ZomatoRecommendationEngine initialized with intelligent domain fallback generator.")
+            logging.info("ℹ️ ZomatoRecommendationEngine initialized with OfflineFallbackEngine (no LLM key).")
 
     def build_prompt(
         self,
@@ -206,10 +209,10 @@ REQUIRED JSON OUTPUT FORMAT:
                 recs = parsed.get("recommendations", [])
                 logging.info(f"✅ Successfully generated {len(recs)} AI recommendations using Groq ({GROQ_LLM_MODEL}).")
             except Exception as e:
-                logging.warning(f"⚠️ Groq LLM API call error ({e}). Using intelligent fallback engine...")
-                recs = self.generate_fallback_recommendations(candidate_pool, user_pref, top_n=top_n)
+                logging.warning(f"⚠️ Groq LLM API call error ({e}). Delegating to OfflineFallbackEngine...")
+                recs = self.fallback_engine.recommend(candidate_pool, user_pref, top_n=top_n)
         else:
-            recs = self.generate_fallback_recommendations(candidate_pool, user_pref, top_n=top_n)
+            recs = self.fallback_engine.recommend(candidate_pool, user_pref, top_n=top_n)
 
         elapsed_ms = round((time.time() - start_time) * 1000, 2)
 

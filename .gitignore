@@ -53,5 +53,11 @@ Thumbs.db
 # ------------------------------------------------------------------------------
 data/raw/*
 !data/raw/.gitkeep
-data/processed/*.parquet
+# NOTE: data/processed/ is committed so Railway has the dataset at startup
+# The parquet & JSON are regenerated daily by the GitHub Actions cron
 data/outputs/temp_*
+
+# ------------------------------------------------------------------------------
+# Design Reference (not needed in production)
+# ------------------------------------------------------------------------------
+stitch_zomato_ai_desktop_portal/

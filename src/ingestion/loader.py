@@ -228,9 +228,84 @@ class ZomatoDatasetIngestor:
         val_str = str(val).strip()
         return [h.strip() for h in val_str.split(",") if h.strip()]
 
+    def fetch_raw_dataset_via_api(self, max_rows: int = 5000) -> pd.DataFrame:
+        """
+        Fetches dataset from HuggingFace Datasets Server REST API (paginated).
+        This approach avoids downloading raw parquet shards (~1 GB) and instead
+        fetches rows directly via the dataset viewer endpoint in pages of 100.
+
+        Args:
+            max_rows: Maximum number of rows to fetch (default 5000).
+
+        Returns:
+            DataFrame of raw restaurant records, or empty DataFrame on failure.
+        """
+        import requests
+
+        base_url = "https://datasets-server.huggingface.co/rows"
+        params_base = {
+            "dataset": self.dataset_id,
+            "config": "default",
+            "split": "train",
+        }
+
+        all_rows = []
+        offset = 0
+        page_size = 100
+
+        logging.info(f"📡 Fetching up to {max_rows} rows from HuggingFace REST API: {self.dataset_id}")
+
+        try:
+            while offset < max_rows:
+                params = {**params_base, "offset": offset, "length": page_size}
+                response = requests.get(base_url, params=params, timeout=30)
+                response.raise_for_status()
+                data = response.json()
+
+                rows = data.get("rows", [])
+                if not rows:
+                    break
+
+                for item in rows:
+                    all_rows.append(item.get("row", {}))
+
+                total_available = data.get("num_rows_total", 0)
+                offset += page_size
+
+                if offset % 500 == 0:
+                    logging.info(f"   ↳ Fetched {len(all_rows)} / {min(max_rows, total_available)} rows...")
+
+                if offset >= total_available:
+                    break
+
+            if all_rows:
+                df = pd.DataFrame(all_rows)
+                logging.info(f"✅ HuggingFace REST API: fetched {len(df)} rows successfully.")
+                return df
+            else:
+                logging.warning("⚠️ HuggingFace REST API returned no rows.")
+                return pd.DataFrame()
+
+        except Exception as e:
+            logging.warning(f"⚠️ HuggingFace REST API fetch failed ({e}).")
+            return pd.DataFrame()
+
     def fetch_raw_dataset(self) -> pd.DataFrame:
-        """Fetches dataset from Hugging Face or uses local fallback."""
-        logging.info(f"📥 Attempting to fetch dataset from Hugging Face: {self.dataset_id}...")
+        """
+        Fetches dataset from HuggingFace, trying:
+        1. Lightweight REST API (no disk download required) — primary method.
+        2. datasets library full download — secondary fallback.
+        3. Built-in sample dataset — final fallback.
+        """
+        logging.info(f"📥 Attempting HuggingFace REST API fetch: {self.dataset_id}...")
+
+        # Primary: lightweight REST API fetch (no large disk requirement)
+        df = self.fetch_raw_dataset_via_api(max_rows=5000)
+        if not df.empty:
+            return df
+
+        # Secondary: try datasets library (requires ~1 GB disk)
+        logging.info("📥 Falling back to datasets library download...")
         try:
             from datasets import load_dataset
             dataset = load_dataset(self.dataset_id)
@@ -239,11 +314,12 @@ class ZomatoDatasetIngestor:
             else:
                 first_split = list(dataset.keys())[0]
                 df = dataset[first_split].to_pandas()
-            logging.info(f"✅ Successfully loaded Hugging Face dataset ({len(df)} raw rows).")
+            logging.info(f"✅ datasets library: loaded {len(df)} rows.")
             return df
         except Exception as e:
-            logging.warning(f"⚠️ Hugging Face dataset pull failed or offline mode ({e}). Utilizing robust sample dataset...")
+            logging.warning(f"⚠️ datasets library failed ({e}). Using built-in sample dataset.")
             return pd.DataFrame(SAMPLE_ZOMATO_DATASET)
+
 
     def clean_and_transform_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
         """Normalizes schema, cleans ratings, costs, cuisine lists, and assigns budget tiers."""
@@ -285,11 +361,22 @@ class ZomatoDatasetIngestor:
         if "city" not in df.columns:
             df["city"] = "Bangalore"
 
-        # Apply Field Transformations
+        # Apply Field Transformations — use .apply() when column exists, else fill entire column
         df["aggregate_rating"] = df["aggregate_rating"].apply(self.parse_rating) if "aggregate_rating" in df.columns else 4.0
         df["cost_for_two"] = df["cost_for_two"].apply(self.parse_cost) if "cost_for_two" in df.columns else 600
-        df["cuisines"] = df["cuisines"].apply(self.parse_cuisines) if "cuisines" in df.columns else [["Multi-Cuisine"]]
-        df["highlights"] = df["highlights"].apply(self.parse_highlights) if "highlights" in df.columns else [[]]
+        if "cuisines" in df.columns:
+            df["cuisines"] = df["cuisines"].apply(self.parse_cuisines)
+        else:
+            df["cuisines"] = pd.Series([["Multi-Cuisine"]] * len(df), index=df.index)
+        # HuggingFace dataset uses 'dish_liked' as highlights proxy when 'highlights' not present
+        if "highlights" in df.columns:
+            df["highlights"] = df["highlights"].apply(self.parse_highlights)
+        elif "dish_liked" in df.columns:
+            df["highlights"] = df["dish_liked"].apply(
+                lambda v: [d.strip() for d in str(v).split(",")[:5] if str(v) not in ("nan", "")] if pd.notna(v) else []
+            )
+        else:
+            df["highlights"] = pd.Series([[]] * len(df), index=df.index)
 
         # Calculate Budget Tiers
         df["budget_tier"] = df["cost_for_two"].apply(get_budget_tier)
