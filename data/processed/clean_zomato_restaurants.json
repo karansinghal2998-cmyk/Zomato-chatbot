@@ -1,0 +1,259 @@
+[
+  {
+    "restaurant_id":"rest_101",
+    "restaurant_name":"Toit",
+    "locality":"Indiranagar",
+    "city":"Bangalore",
+    "cuisines":[
+      "Italian",
+      "American",
+      "Pizza",
+      "Brewery"
+    ],
+    "aggregate_rating":4.6,
+    "votes":14200,
+    "cost_for_two":1500,
+    "budget_tier":"high",
+    "highlights":[
+      "Outdoor Seating",
+      "Craft Beer",
+      "Wood Fired Pizza",
+      "Trendy Ambiance"
+    ]
+  },
+  {
+    "restaurant_id":"rest_102",
+    "restaurant_name":"Corner House Ice Cream",
+    "locality":"Indiranagar",
+    "city":"Bangalore",
+    "cuisines":[
+      "Desserts",
+      "Ice Cream",
+      "Beverages"
+    ],
+    "aggregate_rating":4.7,
+    "votes":8900,
+    "cost_for_two":400,
+    "budget_tier":"low",
+    "highlights":[
+      "DBC Special",
+      "Quick Service",
+      "Family Friendly",
+      "Pocket Friendly"
+    ]
+  },
+  {
+    "restaurant_id":"rest_103",
+    "restaurant_name":"Truffles",
+    "locality":"Koramangala",
+    "city":"Bangalore",
+    "cuisines":[
+      "American",
+      "Burgers",
+      "Continental",
+      "Italian"
+    ],
+    "aggregate_rating":4.5,
+    "votes":16500,
+    "cost_for_two":800,
+    "budget_tier":"medium",
+    "highlights":[
+      "Juicy Burgers",
+      "Casual Dining",
+      "Youth Popular",
+      "Quick Service"
+    ]
+  },
+  {
+    "restaurant_id":"rest_201",
+    "restaurant_name":"The Fisherman's Wharf",
+    "locality":"Bellandur",
+    "city":"Bangalore",
+    "cuisines":[
+      "Seafood",
+      "Goan",
+      "North Indian",
+      "Continental"
+    ],
+    "aggregate_rating":4.4,
+    "votes":9800,
+    "cost_for_two":1500,
+    "budget_tier":"high",
+    "highlights":[
+      "Seafood Platter",
+      "Live Music",
+      "Lakeside Dining",
+      "Goan Vibe"
+    ]
+  },
+  {
+    "restaurant_id":"rest_202",
+    "restaurant_name":"Social Bellandur",
+    "locality":"Bellandur",
+    "city":"Bangalore",
+    "cuisines":[
+      "Continental",
+      "Finger Food",
+      "Asian",
+      "American"
+    ],
+    "aggregate_rating":4.4,
+    "votes":7500,
+    "cost_for_two":1500,
+    "budget_tier":"high",
+    "highlights":[
+      "Co-working Space",
+      "Craft Cocktails",
+      "Vibrant Ambience",
+      "DJ Nights"
+    ]
+  },
+  {
+    "restaurant_id":"rest_203",
+    "restaurant_name":"Ironhill India",
+    "locality":"Bellandur",
+    "city":"Bangalore",
+    "cuisines":[
+      "Microbrewery",
+      "Italian",
+      "Continental",
+      "North Indian"
+    ],
+    "aggregate_rating":4.5,
+    "votes":11200,
+    "cost_for_two":1600,
+    "budget_tier":"high",
+    "highlights":[
+      "World's Largest Brewery",
+      "Lakeside Seating",
+      "Wood Fired Pizza",
+      "Live Sports Screen"
+    ]
+  },
+  {
+    "restaurant_id":"rest_204",
+    "restaurant_name":"Punjabi By Nature 2.0",
+    "locality":"Bellandur",
+    "city":"Bangalore",
+    "cuisines":[
+      "North Indian",
+      "Mughlai",
+      "Kebabs"
+    ],
+    "aggregate_rating":4.3,
+    "votes":4300,
+    "cost_for_two":1400,
+    "budget_tier":"high",
+    "highlights":[
+      "Rich Dal Makhani",
+      "Family Dining",
+      "Butter Chicken",
+      "Buffet Available"
+    ]
+  },
+  {
+    "restaurant_id":"rest_205",
+    "restaurant_name":"Central Jail Restaurant",
+    "locality":"Bellandur",
+    "city":"Bangalore",
+    "cuisines":[
+      "North Indian",
+      "Chinese",
+      "Biryani"
+    ],
+    "aggregate_rating":4.2,
+    "votes":3100,
+    "cost_for_two":800,
+    "budget_tier":"medium",
+    "highlights":[
+      "Jail Theme Ambiance",
+      "Unique Photo Spots",
+      "Spicy Biryani",
+      "Casual Dining"
+    ]
+  },
+  {
+    "restaurant_id":"rest_206",
+    "restaurant_name":"Byg Brewski Brewing Company",
+    "locality":"Bellandur",
+    "city":"Bangalore",
+    "cuisines":[
+      "Asian",
+      "Italian",
+      "Continental",
+      "North Indian"
+    ],
+    "aggregate_rating":4.6,
+    "votes":18900,
+    "cost_for_two":1600,
+    "budget_tier":"high",
+    "highlights":[
+      "Open-Air Ambiance",
+      "Craft Beers",
+      "Sunset Dining",
+      "Dim Sums"
+    ]
+  },
+  {
+    "restaurant_id":"rest_104",
+    "restaurant_name":"Bakehouse Naman",
+    "locality":"Connaught Place",
+    "city":"Delhi",
+    "cuisines":[
+      "North Indian",
+      "Mughlai",
+      "Street Food"
+    ],
+    "aggregate_rating":4.3,
+    "votes":5400,
+    "cost_for_two":600,
+    "budget_tier":"medium",
+    "highlights":[
+      "Butter Chicken",
+      "Family Dining",
+      "Authentic Spices"
+    ]
+  },
+  {
+    "restaurant_id":"rest_105",
+    "restaurant_name":"San Gimignano - The Imperial",
+    "locality":"Janpath",
+    "city":"Delhi",
+    "cuisines":[
+      "Italian",
+      "Fine Dining",
+      "Pasta",
+      "Wine Bar"
+    ],
+    "aggregate_rating":4.8,
+    "votes":2100,
+    "cost_for_two":3500,
+    "budget_tier":"high",
+    "highlights":[
+      "Luxury Fine Dining",
+      "Romantic Ambiance",
+      "Outdoor Courtyard"
+    ]
+  },
+  {
+    "restaurant_id":"rest_106",
+    "restaurant_name":"Saravana Bhavan",
+    "locality":"Connaught Place",
+    "city":"Delhi",
+    "cuisines":[
+      "South Indian",
+      "Vegetarian",
+      "Dosa"
+    ],
+    "aggregate_rating":4.4,
+    "votes":11200,
+    "cost_for_two":450,
+    "budget_tier":"low",
+    "highlights":[
+      "Pure Veg",
+      "Crispy Dosa",
+      "Quick Service",
+      "Family Friendly"
+    ]
+  }
+]

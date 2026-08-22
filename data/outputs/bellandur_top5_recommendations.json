@@ -1,0 +1,79 @@
+{
+  "status": "success",
+  "location": "Bellandur",
+  "min_rating": 4.2,
+  "budget": "high",
+  "total_candidates_evaluated": 6,
+  "recommendations": [
+    {
+      "rank": 1,
+      "restaurant_name": "Byg Brewski Brewing Company",
+      "cuisines": [
+        "Asian",
+        "Italian",
+        "Continental",
+        "North Indian"
+      ],
+      "rating": 4.6,
+      "estimated_cost_for_two": "\u20b91600",
+      "locality": "Bellandur",
+      "ai_explanation": "Byg Brewski offers a high\u2011end, open\u2011air ambiance with craft beers and sunset dining, perfect for a lively group dinner. Its multi\u2011cuisine menu and rating of 4.6 exceed your criteria, while the \u20b91600 cost fits the high\u2011budget range you specified."
+    },
+    {
+      "rank": 2,
+      "restaurant_name": "Ironhill India",
+      "cuisines": [
+        "Microbrewery",
+        "Italian",
+        "Continental",
+        "North Indian"
+      ],
+      "rating": 4.5,
+      "estimated_cost_for_two": "\u20b91600",
+      "locality": "Bellandur",
+      "ai_explanation": "Ironhill combines a massive microbrewery experience with lakeside seating and wood\u2011fired pizza, delivering a vibrant setting for groups. With a 4.5 rating and a \u20b91600 price tag, it aligns well with your high\u2011budget, high\u2011rating, multi\u2011cuisine preferences."
+    },
+    {
+      "rank": 3,
+      "restaurant_name": "The Fisherman's Wharf",
+      "cuisines": [
+        "Seafood",
+        "Goan",
+        "North Indian",
+        "Continental"
+      ],
+      "rating": 4.4,
+      "estimated_cost_for_two": "\u20b91500",
+      "locality": "Bellandur",
+      "ai_explanation": "The Fisherman's Wharf provides a lively lakeside vibe, live music, and a seafood platter that adds excitement to group outings. Its 4.4 rating and \u20b91500 cost meet your budget and quality expectations while offering a distinct coastal flair."
+    },
+    {
+      "rank": 4,
+      "restaurant_name": "Social Bellandur",
+      "cuisines": [
+        "Continental",
+        "Finger Food",
+        "Asian",
+        "American"
+      ],
+      "rating": 4.4,
+      "estimated_cost_for_two": "\u20b91500",
+      "locality": "Bellandur",
+      "ai_explanation": "Social Bellandur\u2019s vibrant ambience, DJ nights, and craft cocktails create an energetic atmosphere ideal for group dinners. The 4.4 rating and \u20b91500 price point satisfy your high\u2011budget and rating requirements, and its diverse menu covers multiple cuisines."
+    },
+    {
+      "rank": 5,
+      "restaurant_name": "Punjabi By Nature 2.0",
+      "cuisines": [
+        "North Indian",
+        "Mughlai",
+        "Kebabs"
+      ],
+      "rating": 4.3,
+      "estimated_cost_for_two": "\u20b91400",
+      "locality": "Bellandur",
+      "ai_explanation": "Punjabi By Nature 2.0 offers rich North Indian flavors, a family\u2011friendly setting, and a buffet option that works well for larger parties. With a solid 4.3 rating and a \u20b91400 cost, it fits within your high\u2011budget range while delivering great food and a comfortable ambiance."
+    }
+  ],
+  "latency_ms": 3129.56
+}

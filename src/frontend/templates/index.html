@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Zomato AI Engine - Smart Dining Recommendations</title>
+
+    <!-- Tailwind CSS with Forms and Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Google Fonts & Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "slate-base": "#0F172A",
+                        "surface-dark": "#1e0f0f",
+                        "surface-container": "#2c1b1b",
+                        "zomato-red": "#E23744",
+                        "zomato-glow": "#FF5260",
+                        "zomato-green": "#10B981"
+                    },
+                    fontFamily: {
+                        "outfit": ["Outfit", "sans-serif"],
+                        "inter": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="font-inter bg-slate-base text-white antialiased flex flex-col h-screen overflow-hidden">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-slate-900/80 backdrop-blur-lg fixed top-0 w-full z-50 border-b border-white/10 flex justify-between items-center px-8 h-20">
+        <div class="flex items-center gap-8">
+            <div class="font-outfit text-2xl font-extrabold text-white flex items-center gap-3">
+                <img class="h-9 object-contain" alt="Zomato AI Engine Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvu5Llk9xCCoa-jySgNz2OWNKIknHD9kI-7v7ggVtBXGVRJ6Ooq5i1qP2njptVmOqyu2ZmQV2VY8GIjPUaew0OcoQRpP7r-nS_NL1xvjfuNaSkx5yLNZtkUvYjKAn2-KKEpnnAtkwpcm-iy8-eZoJtWvLKXvzqKcCF3ErqldO8uLtoix479MMWO-4b4o4uqZzwj7Ak7cULS3fhuQCb2Kq83zWkW1e86QTcGpCpUcgXifLl-hxdfO4c"/>
+                <span class="text-zomato-red">Zomato <span class="bg-zomato-red text-white text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ml-1">AI</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+                <a class="text-zomato-red font-bold border-b-2 border-zomato-red pb-1" href="#">Explore</a>
+                <a class="text-slate-400 hover:text-white transition-colors" href="#">Localities</a>
+                <a class="text-slate-400 hover:text-white transition-colors" href="#">Saved Places</a>
+                <a class="text-slate-400 hover:text-white transition-colors flex items-center gap-1" href="#">
+                    <span class="material-symbols-outlined text-[18px]">memory</span> Groq LLM Telemetry
+                </a>
+                <a class="text-slate-400 hover:text-white transition-colors" href="/docs" target="_blank">API Docs</a>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <button class="text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
+                    <span class="material-symbols-outlined">location_on</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-3 pl-4 border-l border-white/10">
+                <div class="flex flex-col items-end text-xs">
+                    <span class="font-bold text-white">Power User</span>
+                    <span class="text-slate-400 flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-[12px]">location_on</span> Bangalore, IN
+                    </span>
+                </div>
+                <img class="w-10 h-10 rounded-full border border-white/20 object-cover" alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCX9uJlpi8wfAP0TVEn1EcRqL9TDFFVjxea_0rCL2f5seOpTXMKUPOk8W2nl3JtpWIWFuJ1DmycAevLzz1G92AJHclXTJE2AFoC0NBOyoFKAGmqQd8OxjbsPfJkjtcY-hHSzBkAqoA20ywxG597r7eY56SvW4u8PxEEJ5p6nlJXe6dVoUppRc1W7psafasChu2wTa9lZ-Cs4Yo7DJmQGTiuavqpAE1EWGIc65dSpxmv2-vpmQSxpFv"/>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Desktop Layout Canvas -->
+    <main class="flex-1 mt-20 flex overflow-hidden">
+
+        <!-- Sidebar Control Panel -->
+        <aside class="glass-panel border-r border-white/10 shadow-xl flex flex-col p-6 gap-6 w-[360px] shrink-0 h-full overflow-y-auto custom-scrollbar relative z-10">
+            <div>
+                <h2 class="font-outfit text-xl font-bold text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-zomato-red">tune</span> Control Panel
+                </h2>
+                <p class="text-xs text-slate-400">Refine your dining criteria</p>
+            </div>
+
+            <form id="preference-form" onsubmit="event.preventDefault(); submitPreferences();" class="flex flex-col gap-5">
+                
+                <!-- Target Locality Dropdown (Strict Requirement: Dropdown Select) -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-semibold uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[16px] text-zomato-red">my_location</span> Target Locality
+                    </label>
+                    <div class="relative">
+                        <select id="location-select" class="input-dark w-full rounded-lg py-3 px-4 text-sm font-medium cursor-pointer appearance-none">
+                            <option value="Bellandur" selected>Bellandur, Bangalore</option>
+                            <option value="Indiranagar">Indiranagar, Bangalore</option>
+                            <option value="Koramangala">Koramangala, Bangalore</option>
+                            <option value="Connaught Place">Connaught Place, Delhi</option>
+                            <option value="Janpath">Janpath, Delhi</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+
+                <!-- Budget Tier Selector -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-semibold uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[16px] text-zomato-red">payments</span> Budget Tier
+                    </label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" class="budget-btn rounded-lg py-2 text-xs text-center flex flex-col items-center gap-1" data-budget="low" onclick="setBudget('low')">
+                            <span class="font-bold text-zomato-red">₹</span>
+                            <span>Low (&le;₹500)</span>
+                        </button>
+                        <button type="button" class="budget-btn rounded-lg py-2 text-xs text-center flex flex-col items-center gap-1" data-budget="medium" onclick="setBudget('medium')">
+                            <span class="font-bold text-zomato-red">₹₹</span>
+                            <span>Mid (₹800)</span>
+                        </button>
+                        <button type="button" class="budget-btn active rounded-lg py-2 text-xs text-center flex flex-col items-center gap-1" data-budget="high" onclick="setBudget('high')">
+                            <span class="font-bold text-zomato-red">₹₹₹</span>
+                            <span>High (&gt;₹1200)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Rating Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between text-xs font-semibold uppercase text-slate-400 tracking-wider">
+                        <span>Min Rating Threshold</span>
+                        <span id="rating-val-display" class="text-zomato-green font-bold text-sm">4.2+ ⭐</span>
+                    </div>
+                    <input type="range" id="rating-slider" class="w-full accent-zomato-green cursor-pointer" min="3.0" max="4.8" step="0.1" value="4.2" oninput="updateRatingDisplay(this.value)">
+                    <div class="flex justify-between text-[10px] text-slate-400">
+                        <span>3.0</span>
+                        <span>4.0</span>
+                        <span>4.8</span>
+                    </div>
+                </div>
+
+                <!-- Cuisine Multi-Select Tags -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-semibold uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[16px] text-zomato-red">restaurant_menu</span> Cuisines
+                    </label>
+                    <div class="flex flex-wrap gap-1.5" id="cuisine-tags-container">
+                        <span class="cuisine-tag" onclick="toggleCuisine(this, 'Italian')">Italian</span>
+                        <span class="cuisine-tag" onclick="toggleCuisine(this, 'North Indian')">North Indian</span>
+                        <span class="cuisine-tag" onclick="toggleCuisine(this, 'Asian')">Asian</span>
+                        <span class="cuisine-tag" onclick="toggleCuisine(this, 'Continental')">Continental</span>
+                        <span class="cuisine-tag" onclick="toggleCuisine(this, 'Seafood')">Seafood</span>
+                        <span class="cuisine-tag" onclick="toggleCuisine(this, 'Microbrewery')">Microbrewery</span>
+                    </div>
+                </div>
+
+                <!-- Context / Occasion Notes -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-semibold uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[16px] text-zomato-red">edit_note</span> Context / Occasion Notes
+                    </label>
+                    <textarea id="additional-notes" class="input-dark w-full rounded-lg p-3 text-xs h-20 resize-none" placeholder="E.g., Vibrant ambiance for a group dinner with good craft beer.">Great food, vibrant ambiance, suitable for group dinner</textarea>
+                </div>
+
+                <!-- Action Button -->
+                <button type="submit" id="submit-btn" class="btn-primary w-full py-3.5 rounded-xl font-outfit font-bold text-base flex justify-center items-center gap-2 shadow-lg mt-2">
+                    <span class="material-symbols-outlined">auto_awesome</span>
+                    <span id="btn-text">Generate AI Recommendations</span>
+                    <span id="btn-spinner" class="spinner hidden"></span>
+                </button>
+            </form>
+        </aside>
+
+        <!-- Main Dashboard Results Area -->
+        <section class="flex-1 p-8 overflow-y-auto custom-scrollbar relative bg-slate-950/40">
+            <!-- Hero Header -->
+            <div class="max-w-4xl mx-auto mb-8 text-center">
+                <h1 class="font-outfit text-3xl font-extrabold text-white mb-2">
+                    Smart Dining <span class="text-zomato-glow">Recommendations</span>
+                </h1>
+                <p class="text-sm text-slate-400 max-w-xl mx-auto">
+                    Combining real-world Zomato telemetry with Groq LLM reasoning to suggest your ideal dining spot.
+                </p>
+            </div>
+
+            <!-- Results Grid -->
+            <div class="max-w-5xl mx-auto">
+                <div class="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
+                    <h3 class="font-outfit text-xl font-bold text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-zomato-red">workspace_premium</span> Top AI Recommendations
+                    </h3>
+                    <span id="results-meta-badge" class="bg-zomato-red/20 text-zomato-glow border border-zomato-red/30 px-3 py-1 rounded-md text-xs font-semibold uppercase flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px]">memory</span> 6 Candidates Evaluated
+                    </span>
+                </div>
+
+                <!-- Recommendation Cards Container (Food images skipped per instruction) -->
+                <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Dynamic Recommendation Cards injected via app.js -->
+                </div>
+            </div>
+            <div class="h-16"></div>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

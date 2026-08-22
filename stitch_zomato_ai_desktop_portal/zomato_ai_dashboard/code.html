@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Zomato AI Engine - Smart Dining Recommendations</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface": "#f9dcda",
+                        "surface-tint": "#ffb3b1",
+                        "tertiary-container": "#32a099",
+                        "surface-container": "#2c1b1b",
+                        "surface": "#1e0f0f",
+                        "outline": "#ab8987",
+                        "primary-container": "#ff535a",
+                        "inverse-primary": "#bb162c",
+                        "on-tertiary-fixed": "#00201e",
+                        "on-tertiary": "#003734",
+                        "on-tertiary-container": "#00302d",
+                        "surface-bright": "#473534",
+                        "error": "#ffb4ab",
+                        "background": "#1e0f0f",
+                        "on-surface-variant": "#e4bebc",
+                        "surface-variant": "#423030",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#71d7cf",
+                        "on-secondary-container": "#ffadad",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#1e0f0f",
+                        "on-tertiary-fixed-variant": "#00504c",
+                        "secondary-fixed": "#ffdad9",
+                        "on-primary-fixed-variant": "#92001c",
+                        "tertiary-fixed": "#8ef4eb",
+                        "on-error": "#690005",
+                        "on-background": "#f9dcda",
+                        "outline-variant": "#5b403f",
+                        "inverse-surface": "#f9dcda",
+                        "on-primary-container": "#5b000e",
+                        "inverse-on-surface": "#3e2c2b",
+                        "on-secondary-fixed": "#400009",
+                        "secondary-container": "#a30227",
+                        "surface-container-lowest": "#180a0a",
+                        "primary": "#ffb3b1",
+                        "on-secondary": "#680015",
+                        "tertiary": "#71d7cf",
+                        "surface-container-low": "#271717",
+                        "on-primary": "#680011",
+                        "on-primary-fixed": "#410007",
+                        "on-secondary-fixed-variant": "#920021",
+                        "surface-container-highest": "#423030",
+                        "secondary": "#ffb3b3",
+                        "primary-fixed": "#ffdad8",
+                        "surface-container-high": "#372625",
+                        "secondary-fixed-dim": "#ffb3b3",
+                        "primary-fixed-dim": "#ffb3b1",
+                        "slate-base": "#0F172A",
+                        "zomato-red": "#E23744",
+                        "zomato-glow": "#FF5260",
+                        "zomato-green": "#10B981"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "panel-padding": "24px",
+                        "container-max": "1440px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-xl": ["Outfit"],
+                        "body-lg": ["Inter"]
+                    },
+                    fontSize: {
+                        "headline-md": ["32px", { lineHeight: "1.3", fontWeight: "600" }],
+                        "headline-lg": ["40px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "display-xl": ["64px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.slate-base');
+            color: theme('colors.on-surface');
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .glass-panel {
+            background-color: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-modal {
+            background-color: rgba(45, 55, 72, 0.9);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background-color: theme('colors.zomato-red');
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: inset 0 0 10px theme('colors.zomato-glow');
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .input-dark {
+            background-color: rgba(15, 23, 42, 0.5);
+            border: 1px solid transparent;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+        }
+        
+        .input-dark:focus {
+            border-color: theme('colors.zomato-glow');
+            box-shadow: 0 0 8px rgba(255, 82, 96, 0.3);
+            outline: none;
+        }
+
+        .card-img {
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05); 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2); 
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-body-md bg-slate-base text-on-surface antialiased flex flex-col h-screen overflow-hidden">
+<!-- Top Navigation -->
+<nav class="bg-surface/75 backdrop-blur-lg fixed top-0 w-full z-50 border-b border-white/10 shadow-sm flex justify-between items-center px-margin-desktop h-20">
+<div class="flex items-center gap-8">
+<div class="font-headline-md text-headline-md font-bold text-primary flex items-center gap-2">
+<img class="h-8 object-contain" data-alt="A detailed digital rendering of the Zomato AI Engine logo. The logo features deep crimson red text with a stylized glowing AI icon, set against a dark premium slate background. High contrast, modern tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvu5Llk9xCCoa-jySgNz2OWNKIknHD9kI-7v7ggVtBXGVRJ6Ooq5i1qP2njptVmOqyu2ZmQV2VY8GIjPUaew0OcoQRpP7r-nS_NL1xvjfuNaSkx5yLNZtkUvYjKAn2-KKEpnnAtkwpcm-iy8-eZoJtWvLKXvzqKcCF3ErqldO8uLtoix479MMWO-4b4o4uqZzwj7Ak7cULS3fhuQCb2Kq83zWkW1e86QTcGpCpUcgXifLl-hxdfO4c"/>
+<span>Zomato AI</span>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 cursor-pointer active:scale-95 transition-transform hover:bg-white/5 transition-colors px-2 py-1 rounded-sm" href="#">Explore</a>
+<a class="text-on-surface-variant hover:text-on-surface cursor-pointer active:scale-95 transition-transform hover:bg-white/5 transition-colors px-2 py-1 rounded-sm" href="#">Explore Localities</a>
+<a class="text-on-surface-variant hover:text-on-surface cursor-pointer active:scale-95 transition-transform hover:bg-white/5 transition-colors px-2 py-1 rounded-sm" href="#">Saved Places</a>
+<a class="text-on-surface-variant hover:text-on-surface cursor-pointer active:scale-95 transition-transform hover:bg-white/5 transition-colors px-2 py-1 rounded-sm flex items-center gap-1" href="#"><span class="material-symbols-outlined text-[18px]">memory</span> Groq AI Telemetry</a>
+<a class="text-on-surface-variant hover:text-on-surface cursor-pointer active:scale-95 transition-transform hover:bg-white/5 transition-colors px-2 py-1 rounded-sm" href="#">API Docs</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 mr-4">
+<button class="text-on-surface-variant hover:text-on-surface cursor-pointer active:scale-95 transition-transform hover:bg-white/5 p-2 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface cursor-pointer active:scale-95 transition-transform hover:bg-white/5 p-2 rounded-full">
+<span class="material-symbols-outlined">location_on</span>
+</button>
+</div>
+<button class="btn-secondary px-4 py-2 rounded-lg font-title-lg text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit_document</span>
+                Add Review
+            </button>
+<div class="flex items-center gap-3 ml-4 pl-4 border-l border-white/10">
+<div class="flex flex-col items-end">
+<span class="font-title-lg text-sm">User</span>
+<span class="font-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">location_on</span> Bangalore, IN</span>
+</div>
+<img class="w-10 h-10 rounded-full border border-white/20 object-cover" data-alt="A detailed close-up portrait of a user avatar, featuring a professional tech worker in a modern corporate setting, softly lit with cool tones against a dark slate background. High resolution, professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCX9uJlpi8wfAP0TVEn1EcRqL9TDFFVjxea_0rCL2f5seOpTXMKUPOk8W2nl3JtpWIWFuJ1DmycAevLzz1G92AJHclXTJE2AFoC0NBOyoFKAGmqQd8OxjbsPfJkjtcY-hHSzBkAqoA20ywxG597r7eY56SvW4u8PxEEJ5p6nlJXe6dVoUppRc1W7psafasChu2wTa9lZ-Cs4Yo7DJmQGTiuavqpAE1EWGIc65dSpxmv2-vpmQSxpFv"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 mt-20 flex overflow-hidden">
+<!-- Sidebar Navigation & Filters -->
+<aside class="bg-surface-container/75 backdrop-blur-xl border-r border-white/10 shadow-xl flex flex-col p-panel-padding gap-base w-[340px] shrink-0 h-full overflow-y-auto custom-scrollbar relative z-10">
+<div class="mb-6">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Control Panel</h2>
+<p class="font-body-md text-on-surface-variant">Refine your taste</p>
+</div>
+<!-- Contextual Filters -->
+<div class="flex flex-col gap-6">
+<!-- Location -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm uppercase text-on-surface-variant tracking-wider">Target Locality</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">my_location</span>
+<input class="input-dark w-full rounded-lg py-3 pl-10 pr-4 font-body-md" readonly="" type="text" value="Bellandur, Bangalore"/>
+</div>
+</div>
+<!-- Budget -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm uppercase text-on-surface-variant tracking-wider">Budget For Two</label>
+<div class="grid grid-cols-2 gap-2">
+<button class="btn-secondary rounded-lg py-2 text-sm text-center flex flex-col items-center gap-1 hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+<span>Mid (₹800)</span>
+</button>
+<button class="glass-panel border-zomato-red rounded-lg py-2 text-sm text-center flex flex-col items-center gap-1 bg-zomato-red/10 shadow-[inset_0_0_8px_rgba(255,82,96,0.3)]">
+<span class="material-symbols-outlined text-[18px] text-zomato-glow">payments</span>
+<span class="text-zomato-glow font-bold">High (&gt;₹1200)</span>
+</button>
+</div>
+</div>
+<!-- Rating -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm uppercase text-on-surface-variant tracking-wider flex justify-between">
+<span>Min Rating</span>
+<span class="text-zomato-green font-bold">4.2+ ⭐</span>
+</label>
+<input class="w-full accent-zomato-green" max="5.0" min="3.0" step="0.1" type="range" value="4.2"/>
+<div class="flex justify-between text-xs text-on-surface-variant px-1 mt-1">
+<span>3.0</span>
+<span>4.0</span>
+<span>5.0</span>
+</div>
+</div>
+<!-- Cuisines -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm uppercase text-on-surface-variant tracking-wider">Cuisines</label>
+<div class="flex flex-wrap gap-2">
+<span class="bg-zomato-red/20 border border-zomato-red/50 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1 cursor-pointer">
+                            Italian <span class="material-symbols-outlined text-[14px]">close</span>
+</span>
+<span class="bg-zomato-red/20 border border-zomato-red/50 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1 cursor-pointer">
+                            Asian <span class="material-symbols-outlined text-[14px]">close</span>
+</span>
+<span class="bg-white/10 border border-white/20 text-on-surface-variant px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-white/20">
+                            North Indian
+                        </span>
+<span class="bg-white/10 border border-white/20 text-on-surface-variant px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-white/20">
+                            Continental
+                        </span>
+<span class="bg-white/10 border border-white/20 text-on-surface-variant px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-white/20">
+                            + Add More
+                        </span>
+</div>
+</div>
+<!-- Occasion -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm uppercase text-on-surface-variant tracking-wider">Context / Occasion Notes</label>
+<textarea class="input-dark w-full rounded-lg p-3 font-body-md h-24 resize-none" placeholder="E.g., Looking for a vibrant ambiance for a large group gathering with good craft beer.">Vibrant ambiance, large group dining, open-air preferred.</textarea>
+</div>
+</div>
+<div class="mt-auto pt-6 flex flex-col gap-4">
+<button class="btn-primary w-full py-4 rounded-xl font-title-lg font-bold flex justify-center items-center gap-2 shadow-lg">
+<span class="material-symbols-outlined">auto_awesome</span>
+                    Generate AI Recommendations
+                </button>
+<button class="text-on-surface-variant hover:text-white text-sm py-2 flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span> Reset Filters
+                </button>
+</div>
+<div class="flex gap-4 border-t border-white/10 pt-4 mt-2">
+<button class="text-on-surface-variant hover:text-on-surface flex-1 flex flex-col items-center gap-1 py-2 hover:bg-white/5 rounded-lg transition-all">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-xs">Settings</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface flex-1 flex flex-col items-center gap-1 py-2 hover:bg-white/5 rounded-lg transition-all">
+<span class="material-symbols-outlined">help</span>
+<span class="text-xs">Support</span>
+</button>
+</div>
+</aside>
+<!-- Main Dashboard Area -->
+<section class="flex-1 p-8 overflow-y-auto custom-scrollbar relative">
+<!-- Hero Header -->
+<div class="max-w-5xl mx-auto mb-12 text-center mt-4">
+<h1 class="font-display-xl text-display-xl mb-4 text-white">Smart Dining <span class="text-zomato-glow">Recommendations</span></h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Combining real-world Zomato telemetry with Groq LLM reasoning to suggest your ideal dining spot for desktop power users.</p>
+</div>
+<!-- Results Grid -->
+<div class="max-w-6xl mx-auto">
+<div class="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
+<h3 class="font-headline-lg text-headline-lg text-white">Top AI Recommendations</h3>
+<span class="bg-zomato-red/20 text-zomato-glow border border-zomato-red/30 px-3 py-1 rounded-md font-label-sm uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">memory</span>
+                        6 Candidates Evaluated
+                    </span>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+<!-- Recommendation Card 1 (Primary) -->
+<div class="glass-panel rounded-2xl overflow-hidden flex flex-col hover:border-zomato-glow/50 transition-colors duration-300 relative group">
+<div class="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg font-bold text-lg border border-white/20 flex items-center gap-2">
+<span class="text-amber-400">#1</span> Match
+                        </div>
+<div class="h-64 relative overflow-hidden">
+<img class="w-full h-full object-cover card-img group-hover:scale-105 transition-transform duration-700" data-alt="A highly detailed wide shot of an expansive open-air microbrewery at night. Warm string lights illuminate modern rustic seating areas, lush greenery, and a large reflecting pool. High end architectural photography, moody cinematic lighting, deep slate and warm amber tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkn7wBzTYNwqprmUqNn9ECefrUMOeMF4JmqPxOw5QogRG4burcImy0APiUDmbJ0um1jq3q8aVbamhtSl5ps2iZ6K47WbR9lDoya3P04oIR_JyeL1yPsP5f_cNrcqusguivKy5uj2LofUUFYzHkXxM51qaBS-SLXQTNx6jkO1_SvuiAGaH0fVz474lPfA0P9I5lLQ4F8Do4z2yArTxLa_Dambi27DNcpgKTN3rMoKOIcis6Wf1X4zuo"/>
+</div>
+<div class="p-6 -mt-12 relative z-20 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline-md text-headline-md text-white">Byg Brewski Brewing Company</h4>
+<div class="bg-[#10B981] text-white px-2 py-1 rounded-md font-bold flex items-center gap-1 shadow-lg">
+                                    4.6 <span class="material-symbols-outlined text-[14px]">star</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant flex items-center gap-4 mb-4">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> Bellandur</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">payments</span> ₹1600 for two</span>
+</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-on-surface-variant">Continental</span>
+<span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-on-surface-variant">North Indian</span>
+<span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-on-surface-variant">Italian</span>
+<span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-on-surface-variant">Craft Beer</span>
+</div>
+<!-- AI Reasoning Box -->
+<div class="mt-auto glass-modal p-4 rounded-xl border-l-4 border-l-zomato-red">
+<h5 class="text-zomato-glow font-label-sm uppercase mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span> GROQ AI EXPLANATION
+                                </h5>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                                    Based on your preference for vibrant ambiance and group dining, Byg Brewski is the top choice with its expansive open-air setting and consistent telemetry for craft beer and global cuisine in the Bellandur tech park area.
+                                </p>
+</div>
+</div>
+</div>
+<!-- Recommendation Card 2 (Secondary layout example) -->
+<div class="glass-panel rounded-2xl overflow-hidden flex flex-col hover:border-white/30 transition-colors duration-300">
+<div class="h-48 relative overflow-hidden">
+<img class="w-full h-full object-cover card-img" data-alt="A stylish modern Asian fusion restaurant interior with sleek dark wood tables, subtle red neon accents, and dim atmospheric lighting. Professional interior photography, premium dining experience feel, slate and crimson color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzhgflkVj7PBWgdiVwzK5ib7XV5IlYkLDgGOVM9XuT44vnwSH4tV5osH2dnvybgVA0uVy_o9t0BB5mVpPJhOvkwghVtfEmE9GdbnNCUJJGcPA89JKwM87hJSicGbkwZqyQDSZpbRX5m1sSxIKSb_-cXnN8mZmt-zukDF6s9TOgp9Fknb3c61vZnOPY6s6TT3CHPcIG6M5C8DJuzGfGPw47RFPwu_ruLdpU-nb3kcO3dEnHnQvImdXC"/>
+</div>
+<div class="p-6 -mt-8 relative z-20 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-title-lg text-title-lg text-white">The Fatty Bao</h4>
+<div class="bg-[#10B981] text-white px-2 py-1 rounded-md font-bold flex items-center gap-1 shadow-lg text-sm">
+                                    4.4 <span class="material-symbols-outlined text-[14px]">star</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant flex items-center gap-4 mb-4 text-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> Bellandur</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">payments</span> ₹1400 for two</span>
+</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-on-surface-variant">Asian</span>
+<span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-on-surface-variant">Sushi</span>
+<span class="bg-white/5 border border-white/10 px-2 py-1 rounded text-xs text-on-surface-variant">Cocktails</span>
+</div>
+<div class="mt-auto bg-white/5 p-4 rounded-xl border border-white/10">
+<h5 class="text-white font-label-sm uppercase mb-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-gray-400">analytics</span> Telemetry Match
+                                </h5>
+<p class="text-sm text-on-surface-variant line-clamp-2">
+                                    Strong secondary candidate. Meets budget and rating criteria perfectly. Asian cuisine preference matched, though ambiance is more intimate than requested 'large group' note.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="h-24 w-full"></div> <!-- spacer -->
+</section>
+</main>
+</body></html>
