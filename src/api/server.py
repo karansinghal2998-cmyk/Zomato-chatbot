@@ -35,6 +35,8 @@ logging.basicConfig(level=logging.INFO)
 # ---------------------------------------------------------------------------
 # Global state — populated during startup lifespan (Railway-safe cold start)
 # ---------------------------------------------------------------------------
+_state: Dict[str, Any] = {}
+
 def _load_dataset_background():
     """Background loader function to populate dataset without blocking web server boot."""
     try:
