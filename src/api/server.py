@@ -41,12 +41,17 @@ _state: Dict[str, Any] = {}
 async def lifespan(app: FastAPI):
     """Initialise heavy components once on startup, clean up on shutdown."""
     logging.info("🚀 Zomato AI server starting — loading dataset & engines...")
-    ingestor = ZomatoDatasetIngestor()
-    _state["dataset_df"] = ingestor.load_processed_dataset()
+    try:
+        ingestor = ZomatoDatasetIngestor()
+        _state["dataset_df"] = ingestor.load_processed_dataset()
+        logging.info(f"✅ Dataset loaded: {len(_state['dataset_df'])} restaurants indexed.")
+    except Exception as e:
+        logging.error(f"⚠️ Error loading dataset during startup: {e}")
+        _state["dataset_df"] = None
+
     _state["preference_handler"] = PreferenceHandler()
     _state["filter_engine"] = CandidateFilterEngine(max_k=10)
     _state["recommendation_engine"] = ZomatoRecommendationEngine()
-    logging.info(f"✅ Dataset loaded: {len(_state['dataset_df'])} restaurants indexed.")
     yield
     logging.info("🛑 Zomato AI server shutting down.")
     _state.clear()
@@ -110,6 +115,7 @@ if HAS_FASTAPI:
     if static_dir.exists():
         app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
+    @app.get("/health")
     @app.get("/api/v1/health")
     def health_check():
         dataset_df = _state.get("dataset_df")
@@ -119,6 +125,7 @@ if HAS_FASTAPI:
             "dataset": HUGGINGFACE_DATASET_ID,
             "total_restaurants_indexed": len(dataset_df) if dataset_df is not None else 0,
         }
+
 
     @app.get("/api/v1/locations", response_model=LocationResponse)
     def get_locations():
