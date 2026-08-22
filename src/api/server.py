@@ -35,23 +35,30 @@ logging.basicConfig(level=logging.INFO)
 # ---------------------------------------------------------------------------
 # Global state — populated during startup lifespan (Railway-safe cold start)
 # ---------------------------------------------------------------------------
-_state: Dict[str, Any] = {}
+def _load_dataset_background():
+    """Background loader function to populate dataset without blocking web server boot."""
+    try:
+        logging.info("📥 Background dataset load starting...")
+        ingestor = ZomatoDatasetIngestor()
+        df = ingestor.load_processed_dataset()
+        _state["dataset_df"] = df
+        logging.info(f"✅ Background dataset load complete: {len(df)} restaurants indexed.")
+    except Exception as e:
+        logging.error(f"⚠️ Error in background dataset load: {e}")
+        _state["dataset_df"] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialise heavy components once on startup, clean up on shutdown."""
-    logging.info("🚀 Zomato AI server starting — loading dataset & engines...")
-    try:
-        ingestor = ZomatoDatasetIngestor()
-        _state["dataset_df"] = ingestor.load_processed_dataset()
-        logging.info(f"✅ Dataset loaded: {len(_state['dataset_df'])} restaurants indexed.")
-    except Exception as e:
-        logging.error(f"⚠️ Error loading dataset during startup: {e}")
-        _state["dataset_df"] = None
-
+    """Initialise components on startup. Dataset loaded asynchronously to allow instant port binding."""
+    logging.info("🚀 Zomato AI server starting — initializing engines...")
     _state["preference_handler"] = PreferenceHandler()
     _state["filter_engine"] = CandidateFilterEngine(max_k=10)
     _state["recommendation_engine"] = ZomatoRecommendationEngine()
+    
+    # Launch dataset loading in background thread (non-blocking for fast healthcheck)
+    import threading
+    threading.Thread(target=_load_dataset_background, daemon=True).start()
+    
     yield
     logging.info("🛑 Zomato AI server shutting down.")
     _state.clear()
