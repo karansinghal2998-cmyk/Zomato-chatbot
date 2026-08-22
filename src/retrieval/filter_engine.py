@@ -12,7 +12,7 @@ Filters thousands of Zomato restaurant records using:
 import math
 import logging
 import pandas as pd
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 from src.config import MAX_CANDIDATE_POOL_SIZE, get_budget_tier
 from src.input.preference_handler import UserPreferenceRequest
 
